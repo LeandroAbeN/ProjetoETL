@@ -1,0 +1,10 @@
+-- Criação dos esquemas para as 3 camadas do ETL
+
+DROP SCHEMA IF EXISTS raw CASCADE;
+CREATE SCHEMA raw;
+
+DROP SCHEMA IF EXISTS staging CASCADE;
+CREATE SCHEMA staging;
+
+DROP SCHEMA IF EXISTS dm CASCADE;
+CREATE SCHEMA dm;

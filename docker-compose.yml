@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: etl_postgres
+    environment:
+      POSTGRES_DB: etl_portfolio
+      POSTGRES_USER: etl_user
+      POSTGRES_PASSWORD: etl_password123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U etl_user -d etl_portfolio"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - etl_network
+
+  # Opcional: pgAdmin para visualização da base
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: etl_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@etl.local
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - etl_network
+
+volumes:
+  postgres_data:
+
+networks:
+  etl_network:
+    driver: bridge
