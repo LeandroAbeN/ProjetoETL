@@ -1,4 +1,4 @@
--- Criação dos esquemas para as 3 camadas do ETL
+-- Criação dos esquemas para as camadas do ETL e visualizações
 
 DROP SCHEMA IF EXISTS raw CASCADE;
 CREATE SCHEMA raw;
@@ -8,3 +8,6 @@ CREATE SCHEMA staging;
 
 DROP SCHEMA IF EXISTS dm CASCADE;
 CREATE SCHEMA dm;
+
+DROP SCHEMA IF EXISTS analytics CASCADE;
+CREATE SCHEMA analytics;

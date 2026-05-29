@@ -1,32 +1,33 @@
 # Projeto ETL - Portfolio
 
-Um projeto prático de ETL desenvolvido com PostgreSQL, Python e Docker. O projeto implementa um pipeline de transformação de dados em 3 camadas (raw, staging e data mart) usando dados públicos de saúde brasileira como exemplo.
+Um projeto prático de ETL desenvolvido com PostgreSQL, Python e Docker. O projeto implementa um pipeline de transformação de dados em 4 camadas (raw, staging, dm e analytics) usando dados públicos de saúde brasileira como exemplo.
 
 ## Visão Geral
 
 O projeto demonstra:
-- Arquitetura em 3 camadas (raw, staging, dm)
+- Arquitetura em 4 camadas (raw, staging, dm, analytics)
 - Transformação e limpeza de dados
-- Views analíticas para BI
+- Dimensionamento e otimização para análise
+- Camada de visualização dedicada para BI
 - Orquestração com Python
 - Containerização com Docker
-- Normalização e validação de dados  
+- Normalização, validação e enriquecimento de dados  
 
 ## Arquitetura
 
 ```
-Dados brutos (CSV) → RAW → STAGING → DM
-                                      ↓
-                            Views para análise
+Dados brutos (CSV) → RAW → STAGING → DM → ANALYTICS (Views)
 ```
 
-As três camadas:
+As quatro camadas:
 
 **RAW**: Dados em seu estado original, nenhuma transformação. Serve como fonte de verdade e auditoria.
 
 **STAGING**: Dados limpos e validados - normalização de strings, conversão de tipos, tratamento de nulos, validação de ranges.
 
-**DM (Data Mart)**: Dados prontos para análise com cálculos derivados (taxas, índices, classificações) e índices para performance.
+**DM (Data Mart)**: Tabelas dimensionais e de fatos com cálculos derivados (taxas, índices, classificações), enriquecimento de dados, índices e otimizações para performance.
+
+**ANALYTICS**: Camada de visualização com views dedicadas para diferentes perspectivas analíticas e consumo em ferramentas de BI e relatórios.
 
 ## Estrutura do Projeto
 
@@ -50,7 +51,8 @@ ProjetoETL/
     │   ├── 02_create_raw_tables.sql
     │   ├── 03_staging_transformations.sql
     │   ├── 04_dm_transformations.sql
-    │   └── 05_analytics_views.sql
+    │   ├── 05_dm_optimization.sql
+    │   └── 06_analytics_views.sql
     └── python/
         └── load_data.py
 ```
@@ -87,19 +89,21 @@ Carregue os dados CSV:
 docker exec -i etl_postgres psql -U etl_user -d etl_portfolio -c "\COPY raw.saude_municipios(municipio,uf,populacao,casos_covid_2023,obitos_covid_2023,taxa_cobertura_vacina,pessoas_testadas,data_atualizacao,regiao) FROM STDIN WITH (FORMAT csv, HEADER true, DELIMITER ',')" < /workspaces/ProjetoETL/data/raw/saude_municipios.csv
 ```
 
-Execute as transformações:
+Execute as transformações em sequência:
 ```bash
 docker exec -i etl_postgres psql -U etl_user -d etl_portfolio < scripts/sql/03_staging_transformations.sql
 docker exec -i etl_postgres psql -U etl_user -d etl_portfolio < scripts/sql/04_dm_transformations.sql
-docker exec -i etl_postgres psql -U etl_user -d etl_portfolio < scripts/sql/05_analytics_views.sql
+docker exec -i etl_postgres psql -U etl_user -d etl_portfolio < scripts/sql/05_dm_optimization.sql
+docker exec -i etl_postgres psql -U etl_user -d etl_portfolio < scripts/sql/06_analytics_views.sql
 ```
 
-Para explorar os dados:
+Para explorar os dados da camada analytics:
 ```sql
-SELECT * FROM dm.vw_resumo_regiao;
-SELECT * FROM dm.vw_ranking_vacinacao;
-SELECT * FROM dm.vw_cidades_alerta;
-SELECT * FROM dm.vw_dashboard_estado;
+SELECT * FROM analytics.vw_resumo_regiao;
+SELECT * FROM analytics.vw_ranking_vacinacao;
+SELECT * FROM analytics.vw_cidades_alerta;
+SELECT * FROM analytics.vw_dashboard_estado;
+SELECT * FROM analytics.vw_analise_risco_covid;
 ```
 
 Ou acesse pgAdmin em http://localhost:5050 (admin@etl.local / admin123)
