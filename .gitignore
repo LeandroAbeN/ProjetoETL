@@ -1,0 +1,57 @@
+.gitignore
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Ambientes Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+__pycache__/
+*.pyc
+*.pyo
+
+# Variáveis de ambiente
+.env
+.env.local
+*.local
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# PostgreSQL
+.pgpass
+
+# Logs
+*.log
+logs/
+etl_*.log
+
+# Dados processados (opcional - manter apenas raw)
+data/staging/
+data/dm/
+
+# Arquivos temporários
+*.tmp
+*.bak
+.cache/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Roadmap
+ROADMAP.md
+
+# Testes
+.pytest_cache/
+htmlcov/
+.coverage
