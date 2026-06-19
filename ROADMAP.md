@@ -20,17 +20,17 @@ Este documento rastreia os próximos passos de codificação para melhorar a rob
 ---
 
 ## 🔧 Fase 2: Melhorias
-**Status:** ⏳ Aguardando Fase 1  
+**Status:** 🔄 Em Progresso  
 **Objetivo:** Aumentar confiabilidade e observabilidade
 
-- [ ] Adicionar script de validação de dados (count, null checks, ranges)
+- [x] Adicionar script de validação de dados (count, null checks, ranges)
+- [x] Criar script de rollback/reset do banco
 - [ ] Implementar tratamento de idempotência (execução segura múltiplas vezes)
-- [ ] Criar script de rollback/reset do banco
 - [ ] Adicionar função de verificação de integridade das transformações
 
 **Arquivos a criar:**
-- `scripts/python/validate_data.py`
-- `scripts/python/rollback_db.py`
+- [x] `scripts/python/validate_data.py`
+- [x] `scripts/python/rollback_db.py`
 
 ---
 
@@ -89,6 +89,19 @@ Este documento rastreia os próximos passos de codificação para melhorar a rob
 - ✅ Implementado logging
 - ✅ Primeiro commit
 
+### Sessão 2 (2026-06-19)
+- ✅ Criado `validate_data.py` com validações:
+  - Contagem de registros em cada etapa (raw → staging → analytics)
+  - Verificação de valores nulos em colunas críticas
+  - Validação de ranges (população, COVID, cobertura vacinal)
+  - Validação de integridade referencial
+  - Relatório resumido de qualidade
+- ✅ Criado `rollback_db.py` com funcionalidades:
+  - Menu interativo (listar status, tamanho, rollback parcial/completo)
+  - Rollback com TRUNCATE (mais eficiente)
+  - Proteção contra exclusão acidental (confirmação dupla)
+  - Logging de todas operações
+
 ---
 
 ## 🚀 Como Executar Cada Fase
@@ -97,8 +110,11 @@ Este documento rastreia os próximos passos de codificação para melhorar a rob
 # Fase 1: Executar o script melhorado
 python scripts/python/load_data.py
 
-# Fase 2: (Futuro) Validar dados
+# Fase 2: Validar dados após load
 python scripts/python/validate_data.py
+
+# Fase 2: Rollback/Reset do banco
+python scripts/python/rollback_db.py
 
 # Fase 3: (Futuro) Rodar testes
 pytest tests/
